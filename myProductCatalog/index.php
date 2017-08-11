@@ -1,4 +1,4 @@
-<?php $title='Template for testprogram'; include(__DIR__ . '/../mall/header.php'); ?>
+
 
 <div id="the_show">
     <br/><br/>
@@ -25,4 +25,3 @@
 
 
 
-<?php $path=__DIR__; include(__DIR__ . '/../mall/footer.php'); ?>
