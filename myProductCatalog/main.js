@@ -1,24 +1,20 @@
 
-
-
 $(document).ready(function() {
 
-    //"use strict";
 
     (function($) {
 
-            $.fn.pictShow = function(picArr) {
+            $.fn.pictShow = function(pictArr) {
                 var currentPict; //sparar aktuell bild i en variabel
                 var currentText; //sparar aktuell undertext i en variabel
                 var i; //loop variable
                 var lengthArr;//check length of picShow
-                lengthArr = picArr.length; //check length of array
+                lengthArr = pictArr.length; //check length of array
                 var stopIt; //boolean for stopping the function if image is clicked
 
                 stopIt = false;
 
                 i = 0; //initiera variabel till 0
-                showPic();
 
                 //the loop will stop if picture is clicked
                 $("#my_img").click( function() {
@@ -26,11 +22,10 @@ $(document).ready(function() {
                 });
 
 
-
                 function showPic() {
 
                     //if someone clicks the picture the loop will stop
-                    if (stopIt == true) {
+                    if (stopIt === true) {
                         return;
                     }
 
@@ -45,9 +40,9 @@ $(document).ready(function() {
                         //display picture
 
                         $('#my_img')
-                    .fadeOut()
-                    .fadeIn()
-                    .attr('src', currentPict);
+                        .fadeOut()
+                        .fadeIn()
+                        .attr('src', currentPict);
 
                         $("#description").html(currentText);
 
@@ -60,6 +55,7 @@ $(document).ready(function() {
                     }
                 }
 
+                showPic();
             };
             //pictShow();
 
@@ -71,15 +67,13 @@ $(document).ready(function() {
 
             $.fn.miniatures = function(pictArr) {
                 var img; //bilden
-
                 var i; //loop
                 var imgNew; //list of picture elements
-                //var ref;
                 imgNew = "";
 
 
                 //display pictures, the miniatures, from array
-                for (i=0; i<pictArr.length; i++) {
+                for (i=0; i<pictArr.length; i+=1) {
                     img = pictArr[i][0];
 
                     imgNew += " <img id=" + i + " src=" + img + " alt=pict width=100>";
@@ -103,28 +97,19 @@ $(document).ready(function() {
                 //get the pictures from the array and get the ids
                 //get ready to be clickable
                 //sends on to the function that makes the miniature a big picture
-                for (i=0; i<pictArr.length; i++) {
-                    var id;
-                    var img2;
-                    var text2;
 
+                var id;
+                var img2;
+                var text2;
+
+                for (i=0; i<pictArr.length; i+=1) {
                     id = "#" + i;
                     img2 = pictArr[i][0];
                     text2 = pictArr[i][1];
 
                     makeClickable(id, img2, text2);
-
                 }
-
-
-
-                //ref = "<img src=${img} alt='pict' width=100>";
-
-
-                //$("#pics").html(ref);
-
             };
-
         }) (jQuery);
 
     //function for making a lightbox version
@@ -143,62 +128,90 @@ $(document).ready(function() {
                 wWidth = window.innerWidth  || $(window).width();
 
                 //checking the area that is displayed
-                showWidth = $("#the_show").width();
-                showHeight = $("#the_show").height();
+                showWidth = $("#the_show").width() || 940;
+                showHeight = $("#the_show").height() || 610;
 
+
+                //function for shading the bground
+                function shadeBG() {
+                    var shade; //shade variable
+
+                    shade = "<div id='shade'></div>";
+                    console.log("$top");
+
+                    //put the shade below the title
+                    $("#title").append(shade);
+
+                    //style the shade
+                    $("#shade")
+                    .css({
+                        'opacity': '0.8',
+                        'position' : 'absolute',
+                        'background-color' : '#FFF',
+                        'width' : showWidth,
+                        'height' :  showHeight
+                    });
+
+                    console.log('White bground');
+                    console.log(showWidth);
+                    console.log( showHeight);
+                }
+
+                //function to show the picture
+                function showPict(pictPosT, pictPosL) {
+
+                    //get img from specific tag
+                    var imgThis = $("#my_img").attr('src');
+                    console.log(imgThis);
+
+                    $('<img id="lightImg" src="">')
+                    //$('<div id="yeah"></div>')
+                    //.html("hello")
+                    .attr('src', imgThis)
+
+                    .css({
+                        'position' : 'absolute',
+                        'top':  pictPosT,
+                        'left': pictPosL,
+                        'opacity': '10'
+                    })
+                 //.fadeIn()
+                 .appendTo('body');
+
+                    console.log(pictPosT);
+                    console.log(pictPosL);
+                    console.log('Displaying the picture');
+
+                }
 
                 $.fn.lightBox = (function () {
 
-                        // layer on
-                        $('<div id ="top"></div>')
-                        .appendTo('#title')
-                        .css({'opacity': '0.8',
-                            'position' : 'absolute',
-                            'background-color' : '#FFF',
-                            'width' : showWidth,
-                            'height' :  showHeight
-                        });
-
-                        //calculate where the image should be
-                        //this calculation for puttig it in the middle
+                        //decide where the image should be
                         imgWidth = $("#my_img").width();
                         imgHeight = $("#my_img").height();
 
                         pictPosT = (wHeight / 2) - (imgWidth / 2);
-                        pictPosL = (wWidth / 2) - (imgHeight / 2);
+                        pictPosL = (wWidth / 2) - (imgHeight / 2) + 16;
 
-                        //display image
-                        $('<img id="lightImg">')
-                     .attr('src', $(this).attr('src'))
-                     .css({
-                            'position' : 'absolute',
-                            'top':  pictPosT,
-                            'left': pictPosL,
-                            'opacity': '10'
-                        })
-                     .fadeIn()
-                     .appendTo('body');
-                        console.log('Display a picture');
+                        //show the pict
+                        showPict(pictPosT, pictPosL);
+
+                        //shade the bground
+                        shadeBG();
 
 
                         //hide lightbox functions when image is clicked
-                        $("#lightImg").click(function() {
+                        $("#lightImg, #shade").click(function() {
 
-                                $('#top').fadeOut().remove();
+                                $('#shade').remove();
                                 $('#lightImg').fadeOut().remove();
 
                             });
-
                     });
-
-
-
 
             }) (jQuery);
 
-
     //array in numerical order with pictures for displaying
-
     var pictArr;
     pictArr = [];
 
